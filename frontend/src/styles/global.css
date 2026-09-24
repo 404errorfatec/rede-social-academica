@@ -2,15 +2,16 @@
    1. DESIGN TOKENS (Variáveis CSS)
    ============================================ */
 :root {
-  /* Cores */
-  --color-bg: #f5f6fa;
-  --color-surface: #ffffff;
-  --color-text: #1f2430;
-  --color-text-muted: #5a6273;
-  --color-border: #e5e7eb;
-  --color-primary: #3b82f6;
-  --color-primary-hover: #2563eb;
-  --color-nav-bg: #1f2430;
+  /* Cores — paleta Netflix */
+  --color-bg: #0b0b0f;              /* fundo geral escuro */
+  --color-surface: #181818;         /* cards */
+  --color-surface-2: #232323;       /* superfícies elevadas */
+  --color-text: #ffffff;
+  --color-text-muted: #b3b3b3;
+  --color-border: #2a2a2a;
+  --color-primary: #e50914;         /* vermelho Netflix */
+  --color-primary-hover: #f6121d;
+  --color-nav-bg: rgba(0, 0, 0, 0.85);
   --color-nav-text: #ffffff;
 
   /* Espaçamentos */
@@ -21,21 +22,25 @@
   --space-xl: 2rem;
 
   /* Tipografia */
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Netflix Sans", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-size-base: 1rem;
   --font-size-lg: 1.25rem;
-  --font-size-xl: 1.5rem;
+  --font-size-xl: 2rem;
+  --font-size-hero: clamp(1.75rem, 4vw, 3rem);
 
   /* Bordas e sombras */
-  --radius-sm: 6px;
+  --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 0 2px rgba(229, 9, 20, 0.35);
 
   /* Transições */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
+  --transition-slow: 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* ============================================
@@ -49,6 +54,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -56,8 +62,14 @@ body {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
   line-height: 1.5;
-  background: var(--color-bg);
   color: var(--color-text);
+  min-height: 100vh;
+  /* Fundo com gradiente cinematográfico sutil */
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(229, 9, 20, 0.15), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(60, 20, 100, 0.25), transparent 55%),
+    var(--color-bg);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -69,7 +81,24 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+}
+
+/* Scrollbar estilizada (Webkit) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0b0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
 }
 
 /* ============================================
@@ -79,60 +108,98 @@ nav {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md) var(--space-xl);
   background: var(--color-nav-bg);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 50;
+}
+
+/* "Logo" — se você tiver um <a> ou <span> como marca, dá pra usar .brand */
+nav a:first-child {
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  margin-right: var(--space-md);
 }
 
 nav a {
   color: var(--color-nav-text);
   text-decoration: none;
   font-weight: 500;
-  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.95rem;
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
-  transition: background-color var(--transition-fast),
-              opacity var(--transition-fast);
+  position: relative;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+nav a:not(:first-child)::after {
+  content: "";
+  position: absolute;
+  left: var(--space-md);
+  right: var(--space-md);
+  bottom: 4px;
+  height: 2px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-base);
 }
 
 nav a:hover {
-  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateY(-1px);
+}
+nav a:hover::after {
+  transform: scaleX(1);
 }
 
 nav a.active {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 2px;
+  color: var(--color-primary);
+}
+nav a.active::after {
+  transform: scaleX(1);
 }
 
-/* Foco visível para acessibilidade */
 nav a:focus-visible {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 /* ============================================
    4. LAYOUT PRINCIPAL
    ============================================ */
 main {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: var(--space-lg);
+  padding: var(--space-xl);
 }
 
 h1 {
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  line-height: 1.25;
+  font-size: var(--font-size-hero);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   margin: 0 0 var(--space-lg);
   color: var(--color-text);
+  background: linear-gradient(90deg, #fff 40%, #b3b3b3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 h2 {
   font-size: var(--font-size-lg);
-  font-weight: 600;
-  margin: var(--space-lg) 0 var(--space-md);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: var(--space-xl) 0 var(--space-md);
+  color: var(--color-text);
 }
 
 /* ============================================
@@ -140,39 +207,48 @@ h2 {
    ============================================ */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--color-surface);
   border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
 }
 
 th,
 td {
   text-align: left;
-  padding: var(--space-md) var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--color-border);
 }
 
 th {
-  font-weight: 600;
-  font-size: 0.875rem;
+  font-weight: 700;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.08em;
   color: var(--color-text-muted);
-  background: #fafbfc;
+  background: linear-gradient(180deg, #1c1c1c 0%, #141414 100%);
+  border-bottom: 1px solid #2a2a2a;
+}
+
+tbody tr {
+  transition: background-color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+tbody tr:hover {
+  background: var(--color-surface-2);
+  transform: scale(1.002);
 }
 
 tbody tr:last-child td {
   border-bottom: none;
 }
 
-tbody tr {
-  transition: background-color var(--transition-fast);
-}
-
-tbody tr:hover {
-  background: #f9fafb;
+td {
+  color: #e5e5e5;
 }
 
 /* ============================================
@@ -183,18 +259,21 @@ form {
   flex-wrap: wrap;
   gap: var(--space-md);
   align-items: flex-end;
-  background: var(--color-surface);
+  background: linear-gradient(180deg, #1c1c1c 0%, #141414 100%);
   padding: var(--space-lg);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
 }
 
 form label {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
   flex: 1 1 180px;
 }
@@ -203,14 +282,27 @@ input,
 select,
 textarea {
   font: inherit;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--color-border);
+  font-size: 0.95rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #333;
   border-radius: var(--radius-sm);
-  background: var(--color-surface);
+  background: #0f0f0f;
   color: var(--color-text);
   transition: border-color var(--transition-fast),
-              box-shadow var(--transition-fast);
+              box-shadow var(--transition-fast),
+              background var(--transition-fast);
   width: 100%;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #666;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #444;
 }
 
 input:focus,
@@ -218,7 +310,21 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: #131313;
+  box-shadow: var(--shadow-glow);
+}
+
+select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-primary) 50%),
+    linear-gradient(135deg, var(--color-primary) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 2.2rem;
 }
 
 /* ============================================
@@ -226,35 +332,55 @@ textarea:focus {
    ============================================ */
 button {
   font: inherit;
-  font-weight: 500;
-  padding: 0.6rem 1.2rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  padding: 0.75rem 1.6rem;
   border: none;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
-  color: white;
+  color: #fff;
   cursor: pointer;
   transition: background-color var(--transition-fast),
               transform var(--transition-fast),
               box-shadow var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(229, 9, 20, 0.35);
 }
 
 button:hover {
   background: var(--color-primary-hover);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(229, 9, 20, 0.5);
 }
 
 button:active {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
 }
 
 button:focus-visible {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 button:disabled {
-  opacity: 0.6;
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Botão secundário/ghost (use class="ghost") */
+button.ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #555;
+  box-shadow: none;
+}
+button.ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #888;
+  transform: translateY(-1px);
 }
 
 /* ============================================
@@ -264,6 +390,12 @@ button:disabled {
   nav {
     padding: var(--space-md);
     gap: var(--space-sm);
+    overflow-x: auto;
+  }
+
+  nav a:first-child {
+    font-size: 1.1rem;
+    margin-right: var(--space-sm);
   }
 
   main {
@@ -271,7 +403,7 @@ button:disabled {
   }
 
   h1 {
-    font-size: 1.25rem;
+    font-size: 1.6rem;
   }
 
   form {
@@ -293,5 +425,46 @@ button:disabled {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
   }
+}
+
+/* ============================================
+   9. EXTRAS OPCIONAIS (use se quiser)
+   ============================================ */
+
+/* Card com efeito de elevação cinematográfica */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-slow),
+              box-shadow var(--transition-slow);
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md), 0 0 40px rgba(229, 9, 20, 0.15);
+}
+
+/* Badge de destaque */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Divider sutil */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #333, transparent);
+  margin: var(--space-xl) 0;
 }
