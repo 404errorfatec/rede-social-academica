@@ -7,17 +7,20 @@ const pool = require('./db');
 // Uso: npm run db:migrate
 async function migrate() {
   const schemaPath = path.join(__dirname, '..', 'db', 'schema.sql');
-  const sql = fs.readFileSync(schemaPath, 'utf8');
+  const idxsPath = path.join(__dirname, '..', 'db', 'idxs.sql');
+  
+  const sql_schema = fs.readFileSync(schemaPath, 'utf8');
+  const sql_idxs = fs.readFileSync(idxsPath, 'utf8');
 
   try {
-    await pool.query(sql);
-    console.log('Schema aplicado com sucesso.');
+    await pool.query(sql_schema);
+    await pool.query(sql_idxs);
+    
+    console.log('DataBase Init Sucessful...');
   } catch (err) {
-    console.error('Falha ao aplicar schema:', err.message);
+    console.error('Fail[Init DataBase]:', err.message);
     process.exitCode = 1;
-  } finally {
-    await pool.end();
-  }
+  } finally { await pool.end(); }
 }
 
 migrate();
