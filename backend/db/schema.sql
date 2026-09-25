@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS mural_avisos (
   criado_em TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
---teste
+--Teste 02
 
 -- Placeholders para próximas etapas do fluxo (Chat e Mapa de Salas)
 -- ainda não fazem parte do CRUD inicial, mas o schema já reserva o relacionamento
