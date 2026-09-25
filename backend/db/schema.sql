@@ -49,7 +49,25 @@ CREATE TABLE IF NOT EXISTS mural_avisos (
   criado_em TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
---Teste 02
+--Mapa de salas: Mostra informaçoes  em tempo real
+CREATE TABLE IF NOT EXISTS mapa_de_salas(
+                                            id SERIAL PRIMARY KEY,
+                                            sala INTEGER NOT NULL,
+                                            tipo TEXT NOT NULL,
+                                            andar INTEGER NOT NULL,
+                                            lotacao NUMERIC NOT NULL,
+                                            ocupacao BOOLEAN NOT NULL,
+);
+--Agendamento--
+CREATE TABLE IF NOT EXISTS agendamento(
+                                          id SERIAL PRIMARY KEY,
+                                          dia DATE NOT NULL,
+                                          data_final DATE NOT NULL,
+                                          horario TIME NOT NULL,
+                                          disponibilidade BOOLEAN NOT NULL,
+                                          responsavel TEXT NOT NULL,
+                                          sala NUMERIC NOT NULL,
+);
 
 -- Placeholders para próximas etapas do fluxo (Chat e Mapa de Salas)
 -- ainda não fazem parte do CRUD inicial, mas o schema já reserva o relacionamento
